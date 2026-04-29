@@ -1,0 +1,33 @@
+package com.example.final_project.entity;
+
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "movies")
+@Data
+public class Movie {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private Long userId;        // always set from JWT, never from request body
+
+    @Column(nullable = false)
+    private String title;
+
+    private String genre;
+
+    private Integer releaseYear;
+
+    @Column(nullable = false)
+    private Boolean isWatched = false;
+
+    private Double rating;
+}
