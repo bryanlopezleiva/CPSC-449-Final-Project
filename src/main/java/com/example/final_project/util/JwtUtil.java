@@ -25,20 +25,26 @@ public class JwtUtil {
     }
 
     /// generate a token
-    public String generateToken(UserDetails userDetails)
+    public String generateToken(UserDetails userDetails, Long userID)
     {
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(String.valueOf(userID))
+                .claim("email", userDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    /// we need to extract the username in which receives a token
+    /// we need to extract the user id no username
+    public Long extractUserId(String token)
+    {
+        return Long.parseLong(extractClaims(token).getSubject());
+    }
+
     public String extractUsername(String token)
     {
-        return extractClaims(token).getSubject();
+        return extractClaims(token).get("email", String.class);
     }
 
     public Claims extractClaims(String token)

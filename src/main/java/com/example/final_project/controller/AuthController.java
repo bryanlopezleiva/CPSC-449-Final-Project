@@ -39,16 +39,17 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Email already exist"));
+                    .body(Map.of("error", "Email already registered"));
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        User saved = userRepository.save(user);         // save first to get the generated id
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
-        String token = jwtUtil.generateToken(userDetails);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(saved.getEmail());
+        String token = jwtUtil.generateToken(userDetails, saved.getId()); // ← pass userId
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("token", token));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("token", token));
     }
 
     @PostMapping("/login")
@@ -60,12 +61,14 @@ public class AuthController {
                             loginRequest.getPassword()
                     )
             );
-        } catch (BadCredentialsException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid credentials"));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid credentials"));
         }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
-        String token = jwtUtil.generateToken((userDetails));
+        User user = userRepository.findByEmail(loginRequest.getEmail()).get();
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+        String token = jwtUtil.generateToken(userDetails, user.getId()); // ← pass userId
 
         return ResponseEntity.ok(Map.of("token", token));
     }

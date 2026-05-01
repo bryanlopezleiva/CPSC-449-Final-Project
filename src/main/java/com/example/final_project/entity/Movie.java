@@ -30,4 +30,8 @@ public class Movie {
     private Boolean isWatched = false;
 
     private Double rating;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
