@@ -4,8 +4,8 @@ package com.example.final_project.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.List;
 
 @Entity
 @Table(name = "movies")
@@ -30,8 +30,8 @@ public class Movie {
     private Boolean isWatched = false;
 
     private Double rating;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+//
+//     @ManyToOne
+//     @JoinColumn(name = "user_id", nullable = false)
+//     private User user;
 }
