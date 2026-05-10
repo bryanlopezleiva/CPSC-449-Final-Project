@@ -27,6 +27,11 @@ Before running the application, make sure PostgreSQL is running and the database
 CREATE DATABASE final_project_db;
 ```
 
+### Demo
+```
+Youtube Demo: https://youtu.be/4RbLARP2B9A?si=FUhhkkztgqzeZIcH
+```
+
 ---
 
 ## Building the Docker Image
