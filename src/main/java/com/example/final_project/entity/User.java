@@ -4,8 +4,8 @@ package com.example.final_project.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-//import java.util.ArrayList;
-//import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -25,6 +25,6 @@ public class User {
     @Column(nullable = false)
     private String username;
 
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<Movie> movies = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Movie> movies = new ArrayList<>();
 }

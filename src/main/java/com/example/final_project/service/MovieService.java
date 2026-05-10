@@ -2,7 +2,9 @@ package com.example.final_project.service;
 
 import com.example.final_project.dto.MovieDTO;
 import com.example.final_project.entity.Movie;
+import com.example.final_project.entity.User;
 import com.example.final_project.repository.MovieRepository;
+import com.example.final_project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,9 +19,12 @@ public class MovieService {
     @Autowired
     private MovieRepository movieRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     // GET all movies that belong to a user.
     public List<MovieDTO> getAllMovies(Long userId) {
-        return movieRepository.findByUserId(userId)
+        return movieRepository.findByUser_Id(userId)
                 .stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
@@ -31,7 +36,7 @@ public class MovieService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Movie with id " + id + " not found"));
 
-        if(!movie.getUserId().equals(userId)){
+        if(!movie.getUser().getId().equals(userId)){
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN, "You do not have permission to view this movie");
         }
@@ -40,8 +45,12 @@ public class MovieService {
 
     // POST create a new movie
     public MovieDTO createMovie(MovieDTO movieDTO, Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
+
         Movie movie = new Movie();
-        movie.setUserId(userId);
+        movie.setUser(user);
         movie.setTitle(movieDTO.getTitle());
         movie.setGenre(movieDTO.getGenre());
         movie.setReleaseYear(movieDTO.getReleaseYear());
@@ -60,9 +69,9 @@ public class MovieService {
                         HttpStatus.NOT_FOUND, "Movie with id " + id + " not found"));
 
         // Check if the movie belongs to the user
-        if(!movie.getUserId().equals(userId)) {
+        if(!movie.getUser().getId().equals(userId)) {
             throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "You do not have permission to view this movie");
+                    HttpStatus.FORBIDDEN, "You do not have permission to update this movie");
         }
 
         movie.setTitle(movieDTO.getTitle());
@@ -83,9 +92,9 @@ public class MovieService {
                         HttpStatus.NOT_FOUND, "Movie with id " + id + " not found"));
 
         // Check if the movie belongs to the user
-        if(!movie.getUserId().equals(userId)) {
+        if(!movie.getUser().getId().equals(userId)) {
             throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "You do not have permission to view this movie");
+                    HttpStatus.FORBIDDEN, "You do not have permission to delete this movie");
         }
 
         movieRepository.delete(movie);

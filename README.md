@@ -131,4 +131,3 @@ Expected response — **HTTP 201 Created**:
 docker stop movie-watchlist
 docker rm movie-watchlist
 ```
-
